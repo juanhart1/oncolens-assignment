@@ -53,11 +53,14 @@ const reducer = (state: State, action: Action) => {
 };
 
 const IndexPage = () => {
+  // state/dispatcher associated with the items living in state
   const [items, dispatch] = useReducer(reducer, initialState);
 
+  // local state for both filtering inputs
   const [selectedItemsValue, setSelectedItemsValue] = useState("");
   const [nonSelectedItemsValue, setnonSelectedItemsValue] = useState("");
 
+  // filtered items based on their corresponding input
   const filteredSelectedItems = items.selectedItems.filter((item) =>
     item.label.toLowerCase().startsWith(selectedItemsValue),
   );
