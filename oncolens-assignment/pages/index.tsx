@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 
 // constants
 const selected = [
@@ -55,12 +55,22 @@ const reducer = (state: State, action: Action) => {
 const IndexPage = () => {
   const [items, dispatch] = useReducer(reducer, initialState);
 
+  const [selectedItemsValue, setSelectedItemsValue] = useState("");
+  const [nonSelectedItemsValue, setnonSelectedItemsValue] = useState("");
+
+  const filteredSelectedItems = items.selectedItems.filter((item) =>
+    item.label.toLowerCase().startsWith(selectedItemsValue),
+  );
+  const filteredNonSelectedItems = items.nonSelectedItems.filter((item) =>
+    item.label.toLowerCase().startsWith(nonSelectedItemsValue),
+  );
+
   return (
     <div className="flex row gap-x-8">
       <section className="w-96 bg-amber-900">
         <header className="text-center">Not Added</header>
         <ul>
-          {items.nonSelectedItems.map((item) => (
+          {filteredNonSelectedItems.map((item) => (
             <li
               className="capitalize"
               key={item.identifier}
@@ -69,12 +79,17 @@ const IndexPage = () => {
               {item.label}
             </li>
           ))}
+          <input
+            type="text"
+            value={nonSelectedItemsValue}
+            onChange={(e) => setnonSelectedItemsValue(e.target.value)}
+          />
         </ul>
       </section>
       <section className="w-96 bg-green-900">
         <header className="text-center">Added</header>
         <ul>
-          {items.selectedItems.map((item) => (
+          {filteredSelectedItems.map((item) => (
             <li
               className="capitalize"
               key={item.identifier}
@@ -83,6 +98,11 @@ const IndexPage = () => {
               {item.label}
             </li>
           ))}
+          <input
+            type="text"
+            value={selectedItemsValue}
+            onChange={(e) => setSelectedItemsValue(e.target.value)}
+          />
         </ul>
       </section>
     </div>
