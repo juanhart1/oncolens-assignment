@@ -6,7 +6,7 @@ const items = [
   { label: "bananas", identifier: "Bananas1", added: true, selected: false },
   { label: "pears", identifier: "Pear1", added: false, selected: false },
   { label: "melons", identifier: "Melons1", added: false, selected: false },
-  { label: "apple", identifier: "Apple1", added: false, selected: true },
+  { label: "apple", identifier: "Apple1", added: false, selected: false },
   { label: "grape", identifier: "Grape1", added: true, selected: false },
 ];
 
@@ -51,7 +51,7 @@ const reducer = (state: State, action: Action) => {
           nonAddedItems: [...state.nonAddedItems],
         };
       } else {
-        // iterate over not added state
+        // otherwise, iterate over not added state
         const mappedNotAddedItems = state.nonAddedItems.map((notAddedItem) => {
           if (selectedItem.identifier === notAddedItem.identifier) {
             return { ...notAddedItem, selected: !notAddedItem.selected };
@@ -97,15 +97,15 @@ const IndexPage = () => {
 
   // filtered items based on their corresponding input
   const filteredSelectedItems = items.addedItems.filter((item) =>
-    item.label.toLowerCase().startsWith(selectedItemsValue),
+    item.label.toLowerCase().startsWith(selectedItemsValue.toLowerCase()),
   );
   const filteredNonSelectedItems = items.nonAddedItems.filter((item) =>
-    item.label.toLowerCase().startsWith(nonSelectedItemsValue),
+    item.label.toLowerCase().startsWith(nonSelectedItemsValue.toLowerCase()),
   );
 
   return (
-    <div className="flex row gap-x-8">
-      <section className="w-96 bg-amber-900">
+    <div className="flex justify-center gap-x-8">
+      <section className="border flex flex-col p-4 rounded-lg w-96">
         <header className="text-center">Not Added</header>
         <ul>
           {filteredNonSelectedItems.map((item) => (
@@ -119,12 +119,22 @@ const IndexPage = () => {
               {item.label}
             </li>
           ))}
-          <input
-            type="text"
-            value={nonSelectedItemsValue}
-            onChange={(e) => setnonSelectedItemsValue(e.target.value)}
-          />
         </ul>
+        <div className="flex flex-col mt-4 gap-2">
+          <div className="flex flex-col">
+            <label htmlFor="non-added items">Filter Items:</label>
+            <input
+              className="border rounded-lg p-1"
+              name="non-added items"
+              onChange={(e) => setnonSelectedItemsValue(e.target.value)}
+              placeholder="Filtered non-added items here..."
+              type="search"
+              value={nonSelectedItemsValue}
+            />
+          </div>
+          <button className="border p-1 rounded-lg">Move Selected Item(s) To Added</button>
+          <button className="border p-1 rounded-lg">Move All Item(s) To Added</button>
+        </div>
       </section>
       <section className="w-96 bg-green-900">
         <header className="text-center">Added</header>
@@ -140,12 +150,12 @@ const IndexPage = () => {
               {item.label}
             </li>
           ))}
-          <input
-            type="text"
-            value={selectedItemsValue}
-            onChange={(e) => setSelectedItemsValue(e.target.value)}
-          />
         </ul>
+        <input
+          type="text"
+          value={selectedItemsValue}
+          onChange={(e) => setSelectedItemsValue(e.target.value)}
+        />
       </section>
     </div>
   );
