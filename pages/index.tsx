@@ -125,13 +125,12 @@ const IndexPage = () => {
   const [addedInputValue, setaddedInputValue] = useState("");
 
   // filtered items based on their corresponding input
-  const filteredSelectedItems = itemsThatHaveBeenAdded.filter((item) =>
-    item.label.toLowerCase().startsWith(notAddedInputValue.toLowerCase()),
-  );
-  const filteredNonSelectedItems = itemsThatHaveNotBeenAdded.filter((item) =>
+  const filteredAddedItems = itemsThatHaveBeenAdded.filter((item) =>
     item.label.toLowerCase().startsWith(addedInputValue.toLowerCase()),
   );
-
+  const filteredNonAddedItems = itemsThatHaveNotBeenAdded.filter((item) =>
+    item.label.toLowerCase().startsWith(notAddedInputValue.toLowerCase()),
+  );
   // sub-components
   const Empty = () => (
     <div>
@@ -193,7 +192,7 @@ const IndexPage = () => {
           <Empty />
         ) : (
           <List>
-            {filteredNonSelectedItems.map((item, index) => (
+            {filteredNonAddedItems.map((item, index) => (
               <ListItem
                 index={index}
                 item={item}
@@ -212,8 +211,8 @@ const IndexPage = () => {
             <label htmlFor="non-added items">Filter Items:</label>
             <Input
               name="non-added items"
-              onChange={(e) => setaddedInputValue(e.target.value)}
-              value={addedInputValue}
+              onChange={setnotAddedInputValue}
+              value={notAddedInputValue}
             />
           </div>
           <Button onClick={() => dispatch({ type: "Add Item" })}>
@@ -232,7 +231,7 @@ const IndexPage = () => {
           <Empty />
         ) : (
           <List>
-            {filteredSelectedItems.map((item, index) => (
+            {filteredAddedItems.map((item, index) => (
               <ListItem
                 index={index}
                 item={item}
@@ -248,11 +247,11 @@ const IndexPage = () => {
         )}
         <div className="flex flex-col mt-4 gap-2">
           <div className="flex flex-col">
-            <label htmlFor="non-added items">Filter Items:</label>
+            <label htmlFor="added items">Filter Items:</label>
             <Input
-              name="non-added items"
-              onChange={(e) => setnotAddedInputValue(e.target.value)}
-              value={notAddedInputValue}
+              name="added items"
+              onChange={setaddedInputValue}
+              value={addedInputValue}
             />
           </div>
           <Button onClick={() => dispatch({ type: "Remove Item" })}>
