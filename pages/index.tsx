@@ -110,6 +110,57 @@ const reducer = (state: State, action: Action) => {
   }
 };
 
+// sub-components
+const Empty = () => (
+  <div>
+    <p>There are no items left to select</p>
+  </div>
+);
+const List = ({ children }) => {
+  const listStyles =
+    "flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1";
+
+  return <ul className={listStyles}>{children}</ul>;
+};
+const ListItem = ({ index, item, onClick }: ListItemProps) => {
+  const listItemBaseStyles = "border capitalize p-2 rounded-lg";
+
+  return (
+    <li
+      className={clsx(
+        listItemBaseStyles,
+        item.selected ? "border-indigo-600" : "",
+      )}
+      key={`${item.identifier} ${index}`}
+      onClick={onClick}
+    >
+      {item.label}
+    </li>
+  );
+};
+type OnClick = { onClick: () => void };
+type ButtonProps = React.PropsWithChildren<OnClick>;
+const Button = ({ children, onClick }: ButtonProps) => (
+  <button className="border p-1 rounded-lg" onClick={onClick}>
+    {children}
+  </button>
+);
+type InputProps = {
+  name: string;
+  onChange: (arg: any) => void;
+  value: string;
+};
+const Input = ({ name, onChange, value }: InputProps) => (
+  <input
+    className="border rounded-lg p-1"
+    name={name}
+    onChange={(event) => onChange(event.target.value)}
+    placeholder="Filtered non-added items here..."
+    type="search"
+    value={value}
+  />
+);
+
 const IndexPage = () => {
   // state/dispatcher associated with the items living in state
   const [items, dispatch] = useReducer(reducer, initialState);
@@ -130,56 +181,6 @@ const IndexPage = () => {
   );
   const filteredNonAddedItems = itemsThatHaveNotBeenAdded.filter((item) =>
     item.label.toLowerCase().startsWith(notAddedInputValue.toLowerCase()),
-  );
-  // sub-components
-  const Empty = () => (
-    <div>
-      <p>There are no items left to select</p>
-    </div>
-  );
-  const List = ({ children }) => {
-    const listStyles =
-      "flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1";
-
-    return <ul className={listStyles}>{children}</ul>;
-  };
-  const ListItem = ({ index, item, onClick }: ListItemProps) => {
-    const listItemBaseStyles = "border capitalize p-2 rounded-lg";
-
-    return (
-      <li
-        className={clsx(
-          listItemBaseStyles,
-          item.selected ? "border-indigo-600" : "",
-        )}
-        key={`${item.identifier} ${index}`}
-        onClick={onClick}
-      >
-        {item.label}
-      </li>
-    );
-  };
-  type OnClick = { onClick: () => void };
-  type ButtonProps = React.PropsWithChildren<OnClick>;
-  const Button = ({ children, onClick }: ButtonProps) => (
-    <button className="border p-1 rounded-lg" onClick={onClick}>
-      {children}
-    </button>
-  );
-  type InputProps = {
-    name: string;
-    onChange: (arg: any) => void;
-    value: string;
-  };
-  const Input = ({ name, onChange, value }: InputProps) => (
-    <input
-      className="border rounded-lg p-1"
-      name={name}
-      onChange={(event) => onChange(event.target.value)}
-      placeholder="Filtered non-added items here..."
-      type="search"
-      value={value}
-    />
   );
 
   return (
