@@ -190,10 +190,10 @@ const IndexPage = () => {
             <input
               className="border rounded-lg p-1"
               name="non-added items"
-              onChange={(e) => setnonSelectedItemsValue(e.target.value)}
+              onChange={(e) => setSelectedItemsValue(e.target.value)}
               placeholder="Filtered non-added items here..."
               type="search"
-              value={nonSelectedItemsValue}
+              value={selectedItemsValue}
             />
           </div>
           <button className="border p-1 rounded-lg" onClick={() => dispatch({ type: "Remove Item" })}>Move Selected Item(s) To Not Added</button>
