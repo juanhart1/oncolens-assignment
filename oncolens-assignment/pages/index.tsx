@@ -84,6 +84,15 @@ const reducer = (state: State, action: Action) => {
         nonAddedItems,
       };
     }
+    case "Add All Not Added Items": {
+      const nonAddedItems = state.nonAddedItems.map((item) => ({ ...item, added: true }));
+
+      return {
+        addedItems: [...state.addedItems, ...nonAddedItems],
+        allItems: [...state.allItems],
+        nonAddedItems: [],
+      };
+    }
     case "Remove Item": {
       console.log("Item would be removed...");
       return {
@@ -143,7 +152,7 @@ const IndexPage = () => {
             />
           </div>
           <button className="border p-1 rounded-lg" onClick={() => dispatch({ type: "Add Item" })}>Move Selected Item(s) To Added</button>
-          <button className="border p-1 rounded-lg">Move All Item(s) To Added</button>
+          <button className="border p-1 rounded-lg" onClick={() => dispatch({ type: "Add All Not Added Items" })}>Move All Item(s) To Added</button>
         </div>
       </section>
       <section className="w-96 bg-green-900">
