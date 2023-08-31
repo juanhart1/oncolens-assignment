@@ -179,16 +179,16 @@ const IndexPage = () => {
   );
 
   return (
-    <div className="flex justify-center gap-x-8">
+    <div className="flex justify-center gap-x-8 p-4">
       <section className="border flex flex-col p-4 rounded-lg w-96">
         <header className="text-center">Not Added</header>
         {items.nonAddedItems.length === 0 ? (
           <p>Empty</p>
         ) : (
-          <ul>
+          <ul className="flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1">
             {filteredNonSelectedItems.map((item, index) => (
               <li
-                className={clsx("capitalize", item.selected ? "border" : "")}
+                className={clsx("border capitalize p-2 rounded-lg", item.selected ? "border-indigo-600" : "")}
                 key={`${item.identifier} ${index}`}
                 onClick={() => {
                   dispatch({ payload: item.identifier, type: "Select Item" });
@@ -230,10 +230,10 @@ const IndexPage = () => {
         {items.addedItems.length === 0 ? (
           <p>Empty</p>
         ) : (
-          <ul>
+          <ul className="flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1">
             {filteredSelectedItems.map((item, index) => (
               <li
-                className={clsx("capitalize", item.selected ? "border" : "")}
+                className={clsx("border capitalize p-2 rounded-lg", item.selected ? "border-indigo-600" : "")}
                 key={`${item.identifier} ${index}`}
                 onClick={() => {
                   dispatch({ payload: item.identifier, type: "Select Item" });
