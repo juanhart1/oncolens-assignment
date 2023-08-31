@@ -183,6 +183,12 @@ const IndexPage = () => {
     item.label.toLowerCase().startsWith(notAddedInputValue.toLowerCase()),
   );
 
+  // action handler
+  const handleAddingItems = () => dispatch({ type: "Add Item" });
+  const handleAddingAllNotAddedItems = () => dispatch({ type: "Add All Not Added Items" });
+  const handleRemovingItems = () => dispatch({ type: "Remove Item" });
+  const handleAddingAllAddedItems = () => dispatch({ type: "Remove All Added Items" });
+
   return (
     <div className="flex justify-center gap-x-8 p-4">
       <section className="border flex flex-col p-4 rounded-lg w-96">
@@ -216,10 +222,10 @@ const IndexPage = () => {
               value={notAddedInputValue}
             />
           </div>
-          <Button onClick={() => dispatch({ type: "Add Item" })}>
+          <Button onClick={handleAddingItems}>
             Move Selected Item(s) To Added
           </Button>
-          <Button onClick={() => dispatch({ type: "Add All Not Added Items" })}>
+          <Button onClick={handleAddingAllNotAddedItems}>
             Move All Item(s) To Added
           </Button>
         </div>
@@ -255,10 +261,10 @@ const IndexPage = () => {
               value={addedInputValue}
             />
           </div>
-          <Button onClick={() => dispatch({ type: "Remove Item" })}>
+          <Button onClick={handleRemovingItems}>
             Move Selected Item(s) To Not Added
           </Button>
-          <Button onClick={() => dispatch({ type: "Remove All Added Items" })}>
+          <Button onClick={handleAddingAllAddedItems}>
             Move All Item(s) To Not Added
           </Button>
         </div>
