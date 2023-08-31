@@ -19,7 +19,7 @@ type Item = {
 };
 type Items = Item[];
 type State = { addedItems: Items; allItems: Items; nonAddedItems: Items };
-type Action = { type: string; payload: string };
+type Action = { type: string; payload?: string };
 
 // initial state & reducer logic
 const initialState: State = {
@@ -47,7 +47,7 @@ const reducer = (state: State, action: Action) => {
 
         return {
           addedItems: mappedAddedItems,
-          allItems: state.allItems,
+          allItems: [...state.addedItems, ...mappedAddedItems],
           nonAddedItems: [...state.nonAddedItems],
         };
       } else {
@@ -61,17 +61,27 @@ const reducer = (state: State, action: Action) => {
 
         return {
           addedItems: [...state.addedItems],
-          allItems: state.allItems,
+          allItems: [...state.addedItems, ...mappedNotAddedItems],
           nonAddedItems: mappedNotAddedItems,
         };
       }
     }
     case "Add Item": {
-      console.log("Item would be added...");
+      // find selected items
+      const selectedItems = state.allItems.filter((item) => item.selected);
+      // toggle each selected item's `added` field
+      const mappedSelectedItems = selectedItems.map((item) => ({ ...item, added: true, selected: !item.selected }));
+      // list containing updated added items
+      const addedItems = [...state.addedItems, ...mappedSelectedItems];
+      // list of unique identifiers to assist in removing the items that have been added
+      const addedItemIdentifiers = addedItems.map((item) => item.identifier);
+      // filtering down of nonAddedItems now that some have been added
+      const nonAddedItems = state.nonAddedItems.filter((item) => !addedItemIdentifiers.includes(item.identifier));
+
       return {
-        addedItems: [...state.addedItems],
-        allItems: [...state.allItems],
-        nonAddedItems: [...state.nonAddedItems],
+        addedItems,
+        allItems: [...addedItems, ...nonAddedItems],
+        nonAddedItems,
       };
     }
     case "Remove Item": {
@@ -108,10 +118,10 @@ const IndexPage = () => {
       <section className="border flex flex-col p-4 rounded-lg w-96">
         <header className="text-center">Not Added</header>
         <ul>
-          {filteredNonSelectedItems.map((item) => (
+          {filteredNonSelectedItems.map((item, index) => (
             <li
               className={clsx("capitalize", item.selected ? "border" : "")}
-              key={item.identifier}
+              key={`${item.identifier} ${index}`}
               onClick={() => {
                 dispatch({ payload: item.identifier, type: "Select Item" });
               }}
@@ -132,17 +142,17 @@ const IndexPage = () => {
               value={nonSelectedItemsValue}
             />
           </div>
-          <button className="border p-1 rounded-lg">Move Selected Item(s) To Added</button>
+          <button className="border p-1 rounded-lg" onClick={() => dispatch({ type: "Add Item" })}>Move Selected Item(s) To Added</button>
           <button className="border p-1 rounded-lg">Move All Item(s) To Added</button>
         </div>
       </section>
       <section className="w-96 bg-green-900">
         <header className="text-center">Added</header>
         <ul>
-          {filteredSelectedItems.map((item) => (
+          {filteredSelectedItems.map((item, index) => (
             <li
               className={clsx("capitalize", item.selected ? "border" : "")}
-              key={item.identifier}
+              key={`${item.identifier} ${index}`}
               onClick={() => {
                 dispatch({ payload: item.identifier, type: "Select Item" });
               }}
