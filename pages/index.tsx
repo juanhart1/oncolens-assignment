@@ -28,133 +28,78 @@ type Item = {
   selected?: boolean;
 };
 type Items = Item[];
-type State = { addedItems: Items; allItems: Items; nonAddedItems: Items };
+type State = { allItems: Items };
 type Action = { type: string; payload?: string };
 
 // initial state & reducer logic
 const initialState: State = {
-  addedItems: items.filter((item) => item.added),
   allItems: items,
-  nonAddedItems: items.filter((item) => !item.added),
 };
 const reducer = (state: State, action: Action) => {
   switch (action.type) {
     case "Select Item": {
-      // find the matching item
-      const [selectedItem] = state.allItems.filter(
-        (item) => item.identifier === action.payload,
-      );
-
-      // ask whether selected item is added or not
-      if (selectedItem?.added) {
-        // iterate over added state
-        const mappedAddedItems = state.addedItems.map((addedItem) => {
-          if (selectedItem.identifier === addedItem.identifier) {
-            return { ...addedItem, selected: !addedItem.selected };
-          }
-          return addedItem;
-        });
-
-        return {
-          addedItems: mappedAddedItems,
-          allItems: [...state.addedItems, ...mappedAddedItems],
-          nonAddedItems: [...state.nonAddedItems],
-        };
-      } else {
-        // otherwise, iterate over not added state
-        const mappedNotAddedItems = state.nonAddedItems.map((notAddedItem) => {
-          if (selectedItem?.identifier === notAddedItem.identifier) {
-            return { ...notAddedItem, selected: !notAddedItem.selected };
-          }
-          return notAddedItem;
-        });
-
-        return {
-          addedItems: [...state.addedItems],
-          allItems: [...state.addedItems, ...mappedNotAddedItems],
-          nonAddedItems: mappedNotAddedItems,
-        };
-      }
-    }
-    case "Add Item": {
-      // find selected items
-      const selectedItems = state.allItems.filter((item) => item.selected);
-      // toggle each selected item's `added` field
-      const mappedSelectedItems = selectedItems.map((item) => ({
-        ...item,
-        added: true,
-        selected: !item.selected,
-      }));
-      // list containing updated added items
-      const addedItems = [...state.addedItems, ...mappedSelectedItems];
-      // list of unique identifiers to assist in removing the items that have been added
-      const addedItemIdentifiers = addedItems.map((item) => item.identifier);
-      // filtering down of nonAddedItems now that some have been added
-      const nonAddedItems = state.nonAddedItems.filter(
-        (item) => !addedItemIdentifiers.includes(item.identifier),
-      );
-
-      return {
-        addedItems,
-        allItems: [...addedItems, ...nonAddedItems],
-        nonAddedItems,
-      };
-    }
-    case "Remove Item": {
-      // find selected items
-      const selectedItems = state.allItems.filter((item) => item.selected);
-      // toggle each selected item's `added` field
-      const mappedSelectedItems = selectedItems.map((item) => ({
-        ...item,
-        added: false,
-        selected: !item.selected,
-      }));
-      // list containing updated added items
-      const nonAddedItems = [...state.nonAddedItems, ...mappedSelectedItems];
-      // list of unique identifiers to assist in removing the items that have been added
-      const notAddedItemIdentifiers = nonAddedItems.map(
-        (item) => item.identifier,
-      );
-      // filtering down of nonAddedItems now that some have been added
-      const addedItems = state.addedItems.filter(
-        (item) => !notAddedItemIdentifiers.includes(item.identifier),
-      );
-
-      console.log({
-        selectedItems,
-        mappedSelectedItems,
-        nonAddedItems,
-        addedItems,
+      // map over all items and update the selectedItem's selected field
+      const updatedAllItems = state.allItems.map((item) => {
+        if (item.identifier === action.payload) {
+          return { ...item, selected: !item.selected };
+        }
+        return item;
       });
 
       return {
-        addedItems,
-        allItems: [...addedItems, ...nonAddedItems],
-        nonAddedItems,
+        allItems: updatedAllItems,
+      };
+    }
+    case "Add Item": {
+      // map over all items and update the selectedItem's selected field
+      const updatedAllItems = state.allItems.map((item) => {
+        if (item.selected) {
+          return { ...item, added: true, selected: !item.selected };
+        }
+        return item;
+      });
+
+      return {
+        allItems: updatedAllItems,
+      };
+    }
+    case "Remove Item": {
+      // map over all items and update the selectedItem's selected field
+      const updatedAllItems = state.allItems.map((item) => {
+        if (item.added && item.selected) {
+          return { ...item, added: false, selected: !item.selected };
+        }
+        return item;
+      });
+
+      return {
+        allItems: updatedAllItems,
       };
     }
     case "Add All Not Added Items": {
-      const nonAddedItems = state.nonAddedItems.map((item) => ({
-        ...item,
-        added: true,
-      }));
+      // map over all items and update the selectedItem's selected field
+      const updatedAllItems = state.allItems.map((item) => {
+        if (!item.added) {
+          return { ...item, added: true };
+        }
+        return item;
+      });
 
       return {
-        addedItems: [...state.addedItems, ...nonAddedItems],
-        allItems: [...state.allItems],
-        nonAddedItems: [],
+        allItems: updatedAllItems,
       };
     }
-    case "Add All Added Items": {
-      const addedItems = state.addedItems.map((item) => ({
-        ...item,
-        added: false,
-      }));
+    case "Remove All Added Items": {
+      // map over all items and update the selectedItem's selected field
+      const updatedAllItems = state.allItems.map((item) => {
+        if (item.added) {
+          return { ...item, added: false };
+        }
+        return item;
+      });
 
       return {
-        addedItems: [],
-        allItems: [...state.allItems],
-        nonAddedItems: [...state.nonAddedItems, ...addedItems],
+        allItems: updatedAllItems,
       };
     }
     default:
@@ -166,29 +111,38 @@ const IndexPage = () => {
   // state/dispatcher associated with the items living in state
   const [items, dispatch] = useReducer(reducer, initialState);
 
+  // separate added and not added items
+  const itemsThatHaveBeenAdded = items.allItems.filter((item) => item.added);
+  const itemsThatHaveNotBeenAdded = items.allItems.filter(
+    (item) => !item.added,
+  );
+
   // local state for both filtering inputs
-  const [selectedItemsValue, setSelectedItemsValue] = useState("");
-  const [nonSelectedItemsValue, setnonSelectedItemsValue] = useState("");
+  const [notAddedInputValue, setnotAddedInputValue] = useState("");
+  const [addedInputValue, setaddedInputValue] = useState("");
 
   // filtered items based on their corresponding input
-  const filteredSelectedItems = items.addedItems.filter((item) =>
-    item.label.toLowerCase().startsWith(selectedItemsValue.toLowerCase()),
+  const filteredSelectedItems = itemsThatHaveBeenAdded.filter((item) =>
+    item.label.toLowerCase().startsWith(notAddedInputValue.toLowerCase()),
   );
-  const filteredNonSelectedItems = items.nonAddedItems.filter((item) =>
-    item.label.toLowerCase().startsWith(nonSelectedItemsValue.toLowerCase()),
+  const filteredNonSelectedItems = itemsThatHaveNotBeenAdded.filter((item) =>
+    item.label.toLowerCase().startsWith(addedInputValue.toLowerCase()),
   );
 
   return (
     <div className="flex justify-center gap-x-8 p-4">
       <section className="border flex flex-col p-4 rounded-lg w-96">
         <header className="text-center">Not Added</header>
-        {items.nonAddedItems.length === 0 ? (
+        {itemsThatHaveNotBeenAdded.length === 0 ? (
           <p>Empty</p>
         ) : (
           <ul className="flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1">
             {filteredNonSelectedItems.map((item, index) => (
               <li
-                className={clsx("border capitalize p-2 rounded-lg", item.selected ? "border-indigo-600" : "")}
+                className={clsx(
+                  "border capitalize p-2 rounded-lg",
+                  item.selected ? "border-indigo-600" : "",
+                )}
                 key={`${item.identifier} ${index}`}
                 onClick={() => {
                   dispatch({ payload: item.identifier, type: "Select Item" });
@@ -205,10 +159,10 @@ const IndexPage = () => {
             <input
               className="border rounded-lg p-1"
               name="non-added items"
-              onChange={(e) => setnonSelectedItemsValue(e.target.value)}
+              onChange={(e) => setaddedInputValue(e.target.value)}
               placeholder="Filtered non-added items here..."
               type="search"
-              value={nonSelectedItemsValue}
+              value={addedInputValue}
             />
           </div>
           <button
@@ -227,13 +181,16 @@ const IndexPage = () => {
       </section>
       <section className="border flex flex-col p-4 rounded-lg w-96">
         <header className="text-center">Added</header>
-        {items.addedItems.length === 0 ? (
+        {itemsThatHaveBeenAdded.length === 0 ? (
           <p>Empty</p>
         ) : (
           <ul className="flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1">
             {filteredSelectedItems.map((item, index) => (
               <li
-                className={clsx("border capitalize p-2 rounded-lg", item.selected ? "border-indigo-600" : "")}
+                className={clsx(
+                  "border capitalize p-2 rounded-lg",
+                  item.selected ? "border-indigo-600" : "",
+                )}
                 key={`${item.identifier} ${index}`}
                 onClick={() => {
                   dispatch({ payload: item.identifier, type: "Select Item" });
@@ -250,10 +207,10 @@ const IndexPage = () => {
             <input
               className="border rounded-lg p-1"
               name="non-added items"
-              onChange={(e) => setSelectedItemsValue(e.target.value)}
+              onChange={(e) => setnotAddedInputValue(e.target.value)}
               placeholder="Filtered non-added items here..."
               type="search"
-              value={selectedItemsValue}
+              value={notAddedInputValue}
             />
           </div>
           <button
@@ -264,7 +221,7 @@ const IndexPage = () => {
           </button>
           <button
             className="border p-1 rounded-lg"
-            onClick={() => dispatch({ type: "Add All Added Items" })}
+            onClick={() => dispatch({ type: "Remove All Added Items" })}
           >
             Move All Item(s) To Not Added
           </button>
