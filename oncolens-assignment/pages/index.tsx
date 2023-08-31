@@ -89,6 +89,26 @@ const reducer = (state: State, action: Action) => {
         nonAddedItems,
       };
     }
+    case "Remove Item": {
+      // find selected items
+      const selectedItems = state.allItems.filter((item) => item.selected);
+      // toggle each selected item's `added` field
+      const mappedSelectedItems = selectedItems.map((item) => ({ ...item, added: false, selected: !item.selected }));
+      // list containing updated added items
+      const nonAddedItems = [...state.nonAddedItems, ...mappedSelectedItems];
+      // list of unique identifiers to assist in removing the items that have been added
+      const notAddedItemIdentifiers = nonAddedItems.map((item) => item.identifier);
+      // filtering down of nonAddedItems now that some have been added
+      const addedItems = state.addedItems.filter((item) => !notAddedItemIdentifiers.includes(item.identifier));
+
+      console.log({ selectedItems, mappedSelectedItems, nonAddedItems, addedItems });
+
+      return {
+        addedItems,
+        allItems: [...addedItems, ...nonAddedItems],
+        nonAddedItems,
+      };
+    }
     case "Add All Not Added Items": {
       const nonAddedItems = state.nonAddedItems.map((item) => ({ ...item, added: true }));
 
@@ -105,14 +125,6 @@ const reducer = (state: State, action: Action) => {
         addedItems: [],
         allItems: [...state.allItems],
         nonAddedItems: [...state.nonAddedItems, ...addedItems],
-      };
-    }
-    case "Remove Item": {
-      console.log("Item would be removed...");
-      return {
-        addedItems: [...state.addedItems],
-        allItems: [...state.allItems],
-        nonAddedItems: [...state.nonAddedItems],
       };
     }
     default:
