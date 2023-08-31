@@ -12,7 +12,12 @@ const items = [
   { label: "peach", identifier: "Peach1", added: false, selected: false },
   { label: "pear", identifier: "Pear1", added: false, selected: false },
   { label: "plum", identifier: "Plum1", added: true, selected: false },
-  { label: "pineapple", identifier: "Pineapple1", added: true, selected: false },
+  {
+    label: "pineapple",
+    identifier: "Pineapple1",
+    added: true,
+    selected: false,
+  },
 ];
 
 // types
@@ -75,13 +80,19 @@ const reducer = (state: State, action: Action) => {
       // find selected items
       const selectedItems = state.allItems.filter((item) => item.selected);
       // toggle each selected item's `added` field
-      const mappedSelectedItems = selectedItems.map((item) => ({ ...item, added: true, selected: !item.selected }));
+      const mappedSelectedItems = selectedItems.map((item) => ({
+        ...item,
+        added: true,
+        selected: !item.selected,
+      }));
       // list containing updated added items
       const addedItems = [...state.addedItems, ...mappedSelectedItems];
       // list of unique identifiers to assist in removing the items that have been added
       const addedItemIdentifiers = addedItems.map((item) => item.identifier);
       // filtering down of nonAddedItems now that some have been added
-      const nonAddedItems = state.nonAddedItems.filter((item) => !addedItemIdentifiers.includes(item.identifier));
+      const nonAddedItems = state.nonAddedItems.filter(
+        (item) => !addedItemIdentifiers.includes(item.identifier),
+      );
 
       return {
         addedItems,
@@ -93,15 +104,28 @@ const reducer = (state: State, action: Action) => {
       // find selected items
       const selectedItems = state.allItems.filter((item) => item.selected);
       // toggle each selected item's `added` field
-      const mappedSelectedItems = selectedItems.map((item) => ({ ...item, added: false, selected: !item.selected }));
+      const mappedSelectedItems = selectedItems.map((item) => ({
+        ...item,
+        added: false,
+        selected: !item.selected,
+      }));
       // list containing updated added items
       const nonAddedItems = [...state.nonAddedItems, ...mappedSelectedItems];
       // list of unique identifiers to assist in removing the items that have been added
-      const notAddedItemIdentifiers = nonAddedItems.map((item) => item.identifier);
+      const notAddedItemIdentifiers = nonAddedItems.map(
+        (item) => item.identifier,
+      );
       // filtering down of nonAddedItems now that some have been added
-      const addedItems = state.addedItems.filter((item) => !notAddedItemIdentifiers.includes(item.identifier));
+      const addedItems = state.addedItems.filter(
+        (item) => !notAddedItemIdentifiers.includes(item.identifier),
+      );
 
-      console.log({ selectedItems, mappedSelectedItems, nonAddedItems, addedItems });
+      console.log({
+        selectedItems,
+        mappedSelectedItems,
+        nonAddedItems,
+        addedItems,
+      });
 
       return {
         addedItems,
@@ -110,7 +134,10 @@ const reducer = (state: State, action: Action) => {
       };
     }
     case "Add All Not Added Items": {
-      const nonAddedItems = state.nonAddedItems.map((item) => ({ ...item, added: true }));
+      const nonAddedItems = state.nonAddedItems.map((item) => ({
+        ...item,
+        added: true,
+      }));
 
       return {
         addedItems: [...state.addedItems, ...nonAddedItems],
@@ -119,7 +146,10 @@ const reducer = (state: State, action: Action) => {
       };
     }
     case "Add All Added Items": {
-      const addedItems = state.addedItems.map((item) => ({ ...item, added: false }));
+      const addedItems = state.addedItems.map((item) => ({
+        ...item,
+        added: false,
+      }));
 
       return {
         addedItems: [],
@@ -152,19 +182,23 @@ const IndexPage = () => {
     <div className="flex justify-center gap-x-8">
       <section className="border flex flex-col p-4 rounded-lg w-96">
         <header className="text-center">Not Added</header>
-        <ul>
-          {filteredNonSelectedItems.map((item, index) => (
-            <li
-              className={clsx("capitalize", item.selected ? "border" : "")}
-              key={`${item.identifier} ${index}`}
-              onClick={() => {
-                dispatch({ payload: item.identifier, type: "Select Item" });
-              }}
-            >
-              {item.label}
-            </li>
-          ))}
-        </ul>
+        {items.nonAddedItems.length === 0 ? (
+          <p>Empty</p>
+        ) : (
+          <ul>
+            {filteredNonSelectedItems.map((item, index) => (
+              <li
+                className={clsx("capitalize", item.selected ? "border" : "")}
+                key={`${item.identifier} ${index}`}
+                onClick={() => {
+                  dispatch({ payload: item.identifier, type: "Select Item" });
+                }}
+              >
+                {item.label}
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="flex flex-col mt-4 gap-2">
           <div className="flex flex-col">
             <label htmlFor="non-added items">Filter Items:</label>
@@ -177,25 +211,39 @@ const IndexPage = () => {
               value={nonSelectedItemsValue}
             />
           </div>
-          <button className="border p-1 rounded-lg" onClick={() => dispatch({ type: "Add Item" })}>Move Selected Item(s) To Added</button>
-          <button className="border p-1 rounded-lg" onClick={() => dispatch({ type: "Add All Not Added Items" })}>Move All Item(s) To Added</button>
+          <button
+            className="border p-1 rounded-lg"
+            onClick={() => dispatch({ type: "Add Item" })}
+          >
+            Move Selected Item(s) To Added
+          </button>
+          <button
+            className="border p-1 rounded-lg"
+            onClick={() => dispatch({ type: "Add All Not Added Items" })}
+          >
+            Move All Item(s) To Added
+          </button>
         </div>
       </section>
       <section className="border flex flex-col p-4 rounded-lg w-96">
         <header className="text-center">Added</header>
-        <ul>
-          {filteredSelectedItems.map((item, index) => (
-            <li
-              className={clsx("capitalize", item.selected ? "border" : "")}
-              key={`${item.identifier} ${index}`}
-              onClick={() => {
-                dispatch({ payload: item.identifier, type: "Select Item" });
-              }}
-            >
-              {item.label}
-            </li>
-          ))}
-        </ul>
+        {items.addedItems.length === 0 ? (
+          <p>Empty</p>
+        ) : (
+          <ul>
+            {filteredSelectedItems.map((item, index) => (
+              <li
+                className={clsx("capitalize", item.selected ? "border" : "")}
+                key={`${item.identifier} ${index}`}
+                onClick={() => {
+                  dispatch({ payload: item.identifier, type: "Select Item" });
+                }}
+              >
+                {item.label}
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="flex flex-col mt-4 gap-2">
           <div className="flex flex-col">
             <label htmlFor="non-added items">Filter Items:</label>
@@ -208,8 +256,18 @@ const IndexPage = () => {
               value={selectedItemsValue}
             />
           </div>
-          <button className="border p-1 rounded-lg" onClick={() => dispatch({ type: "Remove Item" })}>Move Selected Item(s) To Not Added</button>
-          <button className="border p-1 rounded-lg" onClick={() => dispatch({ type: "Add All Added Items" })}>Move All Item(s) To Not Added</button>
+          <button
+            className="border p-1 rounded-lg"
+            onClick={() => dispatch({ type: "Remove Item" })}
+          >
+            Move Selected Item(s) To Not Added
+          </button>
+          <button
+            className="border p-1 rounded-lg"
+            onClick={() => dispatch({ type: "Add All Added Items" })}
+          >
+            Move All Item(s) To Not Added
+          </button>
         </div>
       </section>
     </div>
