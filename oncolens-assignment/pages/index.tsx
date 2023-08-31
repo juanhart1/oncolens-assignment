@@ -3,11 +3,16 @@ import clsx from "clsx";
 
 // constants
 const items = [
-  { label: "bananas", identifier: "Bananas1", added: true, selected: false },
-  { label: "pears", identifier: "Pear1", added: false, selected: false },
-  { label: "melons", identifier: "Melons1", added: false, selected: false },
   { label: "apple", identifier: "Apple1", added: false, selected: false },
+  { label: "apricot", identifier: "Apricot1", added: false, selected: false },
+  { label: "avocado", identifier: "Avocado1", added: true, selected: false },
+  { label: "banana", identifier: "Banana1", added: true, selected: false },
   { label: "grape", identifier: "Grape1", added: true, selected: false },
+  { label: "melon", identifier: "Melon1", added: false, selected: false },
+  { label: "peach", identifier: "Peach1", added: false, selected: false },
+  { label: "pear", identifier: "Pear1", added: false, selected: false },
+  { label: "plum", identifier: "Plum1", added: true, selected: false },
+  { label: "pineapple", identifier: "Pineapple1", added: true, selected: false },
 ];
 
 // types
@@ -36,7 +41,7 @@ const reducer = (state: State, action: Action) => {
       );
 
       // ask whether selected item is added or not
-      if (selectedItem.added) {
+      if (selectedItem?.added) {
         // iterate over added state
         const mappedAddedItems = state.addedItems.map((addedItem) => {
           if (selectedItem.identifier === addedItem.identifier) {
@@ -53,7 +58,7 @@ const reducer = (state: State, action: Action) => {
       } else {
         // otherwise, iterate over not added state
         const mappedNotAddedItems = state.nonAddedItems.map((notAddedItem) => {
-          if (selectedItem.identifier === notAddedItem.identifier) {
+          if (selectedItem?.identifier === notAddedItem.identifier) {
             return { ...notAddedItem, selected: !notAddedItem.selected };
           }
           return notAddedItem;
@@ -91,6 +96,15 @@ const reducer = (state: State, action: Action) => {
         addedItems: [...state.addedItems, ...nonAddedItems],
         allItems: [...state.allItems],
         nonAddedItems: [],
+      };
+    }
+    case "Add All Added Items": {
+      const addedItems = state.addedItems.map((item) => ({ ...item, added: false }));
+
+      return {
+        addedItems: [],
+        allItems: [...state.allItems],
+        nonAddedItems: [...state.nonAddedItems, ...addedItems],
       };
     }
     case "Remove Item": {
@@ -155,7 +169,7 @@ const IndexPage = () => {
           <button className="border p-1 rounded-lg" onClick={() => dispatch({ type: "Add All Not Added Items" })}>Move All Item(s) To Added</button>
         </div>
       </section>
-      <section className="w-96 bg-green-900">
+      <section className="border flex flex-col p-4 rounded-lg w-96">
         <header className="text-center">Added</header>
         <ul>
           {filteredSelectedItems.map((item, index) => (
@@ -170,11 +184,21 @@ const IndexPage = () => {
             </li>
           ))}
         </ul>
-        <input
-          type="text"
-          value={selectedItemsValue}
-          onChange={(e) => setSelectedItemsValue(e.target.value)}
-        />
+        <div className="flex flex-col mt-4 gap-2">
+          <div className="flex flex-col">
+            <label htmlFor="non-added items">Filter Items:</label>
+            <input
+              className="border rounded-lg p-1"
+              name="non-added items"
+              onChange={(e) => setnonSelectedItemsValue(e.target.value)}
+              placeholder="Filtered non-added items here..."
+              type="search"
+              value={nonSelectedItemsValue}
+            />
+          </div>
+          <button className="border p-1 rounded-lg" onClick={() => dispatch({ type: "Remove Item" })}>Move Selected Item(s) To Not Added</button>
+          <button className="border p-1 rounded-lg" onClick={() => dispatch({ type: "Add All Added Items" })}>Move All Item(s) To Not Added</button>
+        </div>
       </section>
     </div>
   );
