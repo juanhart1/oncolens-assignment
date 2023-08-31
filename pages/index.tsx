@@ -30,6 +30,9 @@ type Item = {
 type Items = Item[];
 type State = { allItems: Items };
 type Action = { type: string; payload?: string };
+// UI component types
+type ListItemProps = { index: number; item: Item; onClick: () => void };
+// types
 
 // initial state & reducer logic
 const initialState: State = {
@@ -129,102 +132,135 @@ const IndexPage = () => {
     item.label.toLowerCase().startsWith(addedInputValue.toLowerCase()),
   );
 
+  // sub-components
+  const Empty = () => (
+    <div>
+      <p>There are no items left to select</p>
+    </div>
+  );
+  const List = ({ children }) => {
+    const listStyles =
+      "flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1";
+
+    return <ul className={listStyles}>{children}</ul>;
+  };
+  const ListItem = ({ index, item, onClick }: ListItemProps) => {
+    const listItemBaseStyles = "border capitalize p-2 rounded-lg";
+
+    return (
+      <li
+        className={clsx(
+          listItemBaseStyles,
+          item.selected ? "border-indigo-600" : "",
+        )}
+        key={`${item.identifier} ${index}`}
+        onClick={onClick}
+      >
+        {item.label}
+      </li>
+    );
+  };
+  type OnClick = { onClick: () => void };
+  type ButtonProps = React.PropsWithChildren<OnClick>;
+  const Button = ({ children, onClick }: ButtonProps) => (
+    <button className="border p-1 rounded-lg" onClick={onClick}>
+      {children}
+    </button>
+  );
+  type InputProps = {
+    name: string;
+    onChange: (arg: any) => void;
+    value: string;
+  };
+  const Input = ({ name, onChange, value }: InputProps) => (
+    <input
+      className="border rounded-lg p-1"
+      name={name}
+      onChange={(event) => onChange(event.target.value)}
+      placeholder="Filtered non-added items here..."
+      type="search"
+      value={value}
+    />
+  );
+
   return (
     <div className="flex justify-center gap-x-8 p-4">
       <section className="border flex flex-col p-4 rounded-lg w-96">
-        <header className="text-center">Not Added</header>
-        {itemsThatHaveNotBeenAdded.length === 0 ? (
-          <p>Empty</p>
+        <header className="text-center">
+          <h1 className="text-center">Not Added</h1>
+        </header>
+        {!itemsThatHaveNotBeenAdded.length ? (
+          <Empty />
         ) : (
-          <ul className="flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1">
+          <List>
             {filteredNonSelectedItems.map((item, index) => (
-              <li
-                className={clsx(
-                  "border capitalize p-2 rounded-lg",
-                  item.selected ? "border-indigo-600" : "",
-                )}
-                key={`${item.identifier} ${index}`}
-                onClick={() => {
-                  dispatch({ payload: item.identifier, type: "Select Item" });
-                }}
-              >
-                {item.label}
-              </li>
+              <ListItem
+                index={index}
+                item={item}
+                onClick={() =>
+                  dispatch({
+                    payload: item.identifier,
+                    type: "Select Item",
+                  })
+                }
+              />
             ))}
-          </ul>
+          </List>
         )}
         <div className="flex flex-col mt-4 gap-2">
           <div className="flex flex-col">
             <label htmlFor="non-added items">Filter Items:</label>
-            <input
-              className="border rounded-lg p-1"
+            <Input
               name="non-added items"
               onChange={(e) => setaddedInputValue(e.target.value)}
-              placeholder="Filtered non-added items here..."
-              type="search"
               value={addedInputValue}
             />
           </div>
-          <button
-            className="border p-1 rounded-lg"
-            onClick={() => dispatch({ type: "Add Item" })}
-          >
+          <Button onClick={() => dispatch({ type: "Add Item" })}>
             Move Selected Item(s) To Added
-          </button>
-          <button
-            className="border p-1 rounded-lg"
-            onClick={() => dispatch({ type: "Add All Not Added Items" })}
-          >
+          </Button>
+          <Button onClick={() => dispatch({ type: "Add All Not Added Items" })}>
             Move All Item(s) To Added
-          </button>
+          </Button>
         </div>
       </section>
       <section className="border flex flex-col p-4 rounded-lg w-96">
-        <header className="text-center">Added</header>
-        {itemsThatHaveBeenAdded.length === 0 ? (
-          <p>Empty</p>
+        <header className="text-center">
+          <h1 className="text-center">Added</h1>
+        </header>
+        {!itemsThatHaveBeenAdded.length ? (
+          <Empty />
         ) : (
-          <ul className="flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1">
+          <List>
             {filteredSelectedItems.map((item, index) => (
-              <li
-                className={clsx(
-                  "border capitalize p-2 rounded-lg",
-                  item.selected ? "border-indigo-600" : "",
-                )}
-                key={`${item.identifier} ${index}`}
-                onClick={() => {
-                  dispatch({ payload: item.identifier, type: "Select Item" });
-                }}
-              >
-                {item.label}
-              </li>
+              <ListItem
+                index={index}
+                item={item}
+                onClick={() =>
+                  dispatch({
+                    payload: item.identifier,
+                    type: "Select Item",
+                  })
+                }
+              />
             ))}
-          </ul>
+          </List>
         )}
         <div className="flex flex-col mt-4 gap-2">
           <div className="flex flex-col">
             <label htmlFor="non-added items">Filter Items:</label>
-            <input
-              className="border rounded-lg p-1"
+            <Input
               name="non-added items"
               onChange={(e) => setnotAddedInputValue(e.target.value)}
-              placeholder="Filtered non-added items here..."
-              type="search"
               value={notAddedInputValue}
             />
           </div>
-          <button
-            className="border p-1 rounded-lg"
-            onClick={() => dispatch({ type: "Remove Item" })}
-          >
+          <Button onClick={() => dispatch({ type: "Remove Item" })}>
             Move Selected Item(s) To Not Added
-          </button>
-          <button
-            className="border p-1 rounded-lg"
-            onClick={() => dispatch({ type: "Remove All Added Items" })}
-          >
+          </Button>
+          <Button onClick={() => dispatch({ type: "Remove All Added Items" })}>
             Move All Item(s) To Not Added
-          </button>
+          </Button>
         </div>
       </section>
     </div>
