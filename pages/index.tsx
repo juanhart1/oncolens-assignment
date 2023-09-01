@@ -38,6 +38,7 @@ type InputProps = {
   onChange: (arg: any) => void;
   value: string;
 };
+type ListHeaderProps = { title: string };
 type ListItemProps = { index: number; item: Item; onClick: () => void };
 type ListProps = { items: Items; dispatch: Dispatch<Action> };
 type OnClick = { onClick: () => void };
@@ -162,7 +163,7 @@ const List = ({ items, dispatch }: ListProps) => {
     </ul>
   );
 };
-const ListHeader = ({ title }: {title: string}) => (
+const ListHeader = ({ title }: ListHeaderProps) => (
   <header className="text-center">
     <h1 className="text-center">{title}</h1>
   </header>
@@ -215,16 +216,20 @@ const IndexPage = () => {
   const handleAddingAllAddedItems = () =>
     dispatch({ type: "Remove All Added Items" });
 
+  // shared styles
+  const sectionStyles = "border flex flex-col p-4 rounded-lg w-96";
+  const inputContainerStyles = "flex flex-col mt-4 gap-2";
+
   return (
     <div className="flex justify-center gap-x-8 p-4">
-      <section className="border flex flex-col p-4 rounded-lg w-96">
+      <section className={sectionStyles}>
         <ListHeader title="Not Added" />
         {!itemsThatHaveNotBeenAdded.length ? (
           <Empty />
         ) : (
           <List items={filteredNonAddedItems} dispatch={dispatch} />
         )}
-        <div className="flex flex-col mt-4 gap-2">
+        <div className={inputContainerStyles}>
           <div className="flex flex-col">
             <label htmlFor="non-added items">Filter Items:</label>
             <Input
@@ -241,14 +246,14 @@ const IndexPage = () => {
           </Button>
         </div>
       </section>
-      <section className="border flex flex-col p-4 rounded-lg w-96">
-      <ListHeader title="Added" />
+      <section className={sectionStyles}>
+        <ListHeader title="Added" />
         {!itemsThatHaveBeenAdded.length ? (
           <Empty />
         ) : (
           <List items={filteredAddedItems} dispatch={dispatch} />
         )}
-        <div className="flex flex-col mt-4 gap-2">
+        <div className={inputContainerStyles}>
           <div className="flex flex-col">
             <label htmlFor="added items">Filter Items:</label>
             <Input
