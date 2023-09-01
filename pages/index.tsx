@@ -162,6 +162,11 @@ const List = ({ items, dispatch }: ListProps) => {
     </ul>
   );
 };
+const ListHeader = ({ title }: {title: string}) => (
+  <header className="text-center">
+    <h1 className="text-center">{title}</h1>
+  </header>
+);
 const ListItem = ({ index, item, onClick }: ListItemProps) => {
   const listItemBaseStyles = "border capitalize p-2 rounded-lg";
 
@@ -213,9 +218,7 @@ const IndexPage = () => {
   return (
     <div className="flex justify-center gap-x-8 p-4">
       <section className="border flex flex-col p-4 rounded-lg w-96">
-        <header className="text-center">
-          <h1 className="text-center">Not Added</h1>
-        </header>
+        <ListHeader title="Not Added" />
         {!itemsThatHaveNotBeenAdded.length ? (
           <Empty />
         ) : (
@@ -239,9 +242,7 @@ const IndexPage = () => {
         </div>
       </section>
       <section className="border flex flex-col p-4 rounded-lg w-96">
-        <header className="text-center">
-          <h1 className="text-center">Added</h1>
-        </header>
+      <ListHeader title="Added" />
         {!itemsThatHaveBeenAdded.length ? (
           <Empty />
         ) : (
