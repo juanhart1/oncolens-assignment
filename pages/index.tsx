@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { useReducer, useState, Dispatch } from "react";
 import clsx from "clsx";
 
 // constants
@@ -116,7 +116,7 @@ const Empty = () => (
     <p>There are no items left to select</p>
   </div>
 );
-type ListProps = { items: Items; dispatch: (arg: Action) => void };
+type ListProps = { items: Items; dispatch: Dispatch<Action> };
 const List = ({ items, dispatch }: ListProps) => {
   const listStyles =
     "flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1";
