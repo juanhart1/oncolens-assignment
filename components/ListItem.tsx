@@ -3,6 +3,7 @@ import { ListItemProps } from "../interfaces";
 
 const ListItem = ({ index, item, onClick }: ListItemProps) => {
   const listItemBaseStyles = "border capitalize p-2 rounded-lg";
+  const emoji = String.fromCodePoint(item.emoji);
 
   return (
     <li
@@ -13,7 +14,7 @@ const ListItem = ({ index, item, onClick }: ListItemProps) => {
       key={`${item.identifier} ${index}`}
       onClick={onClick}
     >
-      {item.label} {String.fromCodePoint(item.emoji)}
+      {item.label} {emoji}
     </li>
   );
 };
