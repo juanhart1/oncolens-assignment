@@ -21,6 +21,7 @@ const items = [
 ];
 
 // types
+// State-related types
 type Item = {
   added: boolean;
   identifier: string;
@@ -31,13 +32,22 @@ type Items = Item[];
 type State = { allItems: Items };
 type Action = { type: string; payload?: string };
 // UI component types
+type ButtonProps = React.PropsWithChildren<OnClick>;
+type InputProps = {
+  name: string;
+  onChange: (arg: any) => void;
+  value: string;
+};
 type ListItemProps = { index: number; item: Item; onClick: () => void };
+type ListProps = { items: Items; dispatch: Dispatch<Action> };
+type OnClick = { onClick: () => void };
 // types
 
-// initial state & reducer logic
+// initial state
 const initialState: State = {
   allItems: items,
 };
+// reducer business logic
 const reducer = (state: State, action: Action) => {
   switch (action.type) {
     case "Select Item": {
@@ -111,12 +121,26 @@ const reducer = (state: State, action: Action) => {
 };
 
 // sub-components
+const Button = ({ children, onClick }: ButtonProps) => (
+  <button className="border p-1 rounded-lg" onClick={onClick}>
+    {children}
+  </button>
+);
+const Input = ({ name, onChange, value }: InputProps) => (
+  <input
+    className="border rounded-lg p-1"
+    name={name}
+    onChange={(event) => onChange(event.target.value)}
+    placeholder="Filtered non-added items here..."
+    type="search"
+    value={value}
+  />
+);
 const Empty = () => (
   <div>
     <p>There are no items left to select</p>
   </div>
 );
-type ListProps = { items: Items; dispatch: Dispatch<Action> };
 const List = ({ items, dispatch }: ListProps) => {
   const listStyles =
     "flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1";
@@ -154,29 +178,8 @@ const ListItem = ({ index, item, onClick }: ListItemProps) => {
     </li>
   );
 };
-type OnClick = { onClick: () => void };
-type ButtonProps = React.PropsWithChildren<OnClick>;
-const Button = ({ children, onClick }: ButtonProps) => (
-  <button className="border p-1 rounded-lg" onClick={onClick}>
-    {children}
-  </button>
-);
-type InputProps = {
-  name: string;
-  onChange: (arg: any) => void;
-  value: string;
-};
-const Input = ({ name, onChange, value }: InputProps) => (
-  <input
-    className="border rounded-lg p-1"
-    name={name}
-    onChange={(event) => onChange(event.target.value)}
-    placeholder="Filtered non-added items here..."
-    type="search"
-    value={value}
-  />
-);
 
+// The page/component responsible for rendering app
 const IndexPage = () => {
   // state/dispatcher associated with the items living in state
   const [items, dispatch] = useReducer(reducer, initialState);
