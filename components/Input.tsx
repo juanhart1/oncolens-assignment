@@ -5,7 +5,7 @@ const Input = ({ name, onChange, value }: InputProps) => (
     className="border rounded-lg p-1"
     name={name}
     onChange={(event) => onChange(event.target.value)}
-    placeholder="Filtered non-added items here..."
+    placeholder="Filtered items here..."
     type="search"
     value={value}
   />
