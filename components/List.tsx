@@ -1,19 +1,26 @@
-import * as React from "react";
+import { ListProps } from "../interfaces";
 import ListItem from "./ListItem";
-import { User } from "../interfaces";
 
-type Props = {
-  items: User[];
+const List = ({ items, dispatch }: ListProps) => {
+  const listStyles =
+    "flex flex-col border p-2 h-40 overflow-scroll rounded-lg gap-y-1";
+
+  return (
+    <ul className={listStyles}>
+      {items.map((item, index) => (
+        <ListItem
+          index={index}
+          item={item}
+          onClick={() =>
+            dispatch({
+              payload: item.identifier,
+              type: "Select Item",
+            })
+          }
+        />
+      ))}
+    </ul>
+  );
 };
-
-const List = ({ items }: Props) => (
-  <ul>
-    {items.map((item) => (
-      <li key={item.id}>
-        <ListItem data={item} />
-      </li>
-    ))}
-  </ul>
-);
 
 export default List;

@@ -1,16 +1,21 @@
-import React from "react";
-import Link from "next/link";
+import clsx from "clsx";
+import { ListItemProps } from "../interfaces";
 
-import { User } from "../interfaces";
+const ListItem = ({ index, item, onClick }: ListItemProps) => {
+  const listItemBaseStyles = "border capitalize p-2 rounded-lg";
 
-type Props = {
-  data: User;
+  return (
+    <li
+      className={clsx(
+        listItemBaseStyles,
+        item.selected ? "border-indigo-600" : "",
+      )}
+      key={`${item.identifier} ${index}`}
+      onClick={onClick}
+    >
+      {item.label}
+    </li>
+  );
 };
-
-const ListItem = ({ data }: Props) => (
-  <Link href="/users/[id]" as={`/users/${data.id}`}>
-    {data.id}:{data.name}
-  </Link>
-);
 
 export default ListItem;
