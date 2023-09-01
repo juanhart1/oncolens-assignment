@@ -13,7 +13,7 @@ const ListItem = ({ index, item, onClick }: ListItemProps) => {
       key={`${item.identifier} ${index}`}
       onClick={onClick}
     >
-      {item.label}
+      {item.label} {String.fromCodePoint(item.emoji)}
     </li>
   );
 };

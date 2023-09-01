@@ -13,6 +13,7 @@ type Item = {
   identifier: string;
   label: string;
   selected?: boolean;
+  emoji: number;
 };
 type Items = Item[];
 type State = { allItems: Items };
