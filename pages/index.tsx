@@ -38,7 +38,7 @@ const IndexPage = () => {
   const inputContainerStyles = "flex flex-col mt-4 gap-2";
 
   return (
-    <div className="flex justify-center gap-x-8 p-4">
+    <div className="flex font-mono justify-center gap-x-8 p-4">
       <section className={sectionStyles}>
         <ListHeader title="Not Added" />
         {!itemsThatHaveNotBeenAdded.length ? (
