@@ -116,11 +116,27 @@ const Empty = () => (
     <p>There are no items left to select</p>
   </div>
 );
-const List = ({ children }) => {
+type ListProps = { items: Items; dispatch: (arg: Action) => void };
+const List = ({ items, dispatch }: ListProps) => {
   const listStyles =
     "flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1";
 
-  return <ul className={listStyles}>{children}</ul>;
+  return (
+    <ul className={listStyles}>
+      {items.map((item, index) => (
+        <ListItem
+          index={index}
+          item={item}
+          onClick={() =>
+            dispatch({
+              payload: item.identifier,
+              type: "Select Item",
+            })
+          }
+        />
+      ))}
+    </ul>
+  );
 };
 const ListItem = ({ index, item, onClick }: ListItemProps) => {
   const listItemBaseStyles = "border capitalize p-2 rounded-lg";
@@ -165,7 +181,7 @@ const IndexPage = () => {
   // state/dispatcher associated with the items living in state
   const [items, dispatch] = useReducer(reducer, initialState);
 
-  // separate added and not added items
+  // separated added and not added items
   const itemsThatHaveBeenAdded = items.allItems.filter((item) => item.added);
   const itemsThatHaveNotBeenAdded = items.allItems.filter(
     (item) => !item.added,
@@ -183,11 +199,13 @@ const IndexPage = () => {
     item.label.toLowerCase().startsWith(notAddedInputValue.toLowerCase()),
   );
 
-  // action handler
+  // action handlers
   const handleAddingItems = () => dispatch({ type: "Add Item" });
-  const handleAddingAllNotAddedItems = () => dispatch({ type: "Add All Not Added Items" });
+  const handleAddingAllNotAddedItems = () =>
+    dispatch({ type: "Add All Not Added Items" });
   const handleRemovingItems = () => dispatch({ type: "Remove Item" });
-  const handleAddingAllAddedItems = () => dispatch({ type: "Remove All Added Items" });
+  const handleAddingAllAddedItems = () =>
+    dispatch({ type: "Remove All Added Items" });
 
   return (
     <div className="flex justify-center gap-x-8 p-4">
@@ -198,20 +216,7 @@ const IndexPage = () => {
         {!itemsThatHaveNotBeenAdded.length ? (
           <Empty />
         ) : (
-          <List>
-            {filteredNonAddedItems.map((item, index) => (
-              <ListItem
-                index={index}
-                item={item}
-                onClick={() =>
-                  dispatch({
-                    payload: item.identifier,
-                    type: "Select Item",
-                  })
-                }
-              />
-            ))}
-          </List>
+          <List items={filteredNonAddedItems} dispatch={dispatch} />
         )}
         <div className="flex flex-col mt-4 gap-2">
           <div className="flex flex-col">
@@ -237,20 +242,7 @@ const IndexPage = () => {
         {!itemsThatHaveBeenAdded.length ? (
           <Empty />
         ) : (
-          <List>
-            {filteredAddedItems.map((item, index) => (
-              <ListItem
-                index={index}
-                item={item}
-                onClick={() =>
-                  dispatch({
-                    payload: item.identifier,
-                    type: "Select Item",
-                  })
-                }
-              />
-            ))}
-          </List>
+          <List items={filteredAddedItems} dispatch={dispatch} />
         )}
         <div className="flex flex-col mt-4 gap-2">
           <div className="flex flex-col">
