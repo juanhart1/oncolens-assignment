@@ -1,4 +1,4 @@
-import { useReducer, useState, Dispatch } from "react";
+import { useReducer, useState } from "react";
 import { initialState, reducer } from "../utils/reducer";
 import { Button, Empty, Input, List, ListHeader } from "../components";
 
