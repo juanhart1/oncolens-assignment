@@ -137,13 +137,13 @@ const Input = ({ name, onChange, value }: InputProps) => (
   />
 );
 const Empty = () => (
-  <div>
+  <div className="flex items-center justify-center border h-40 rounded-lg gap-y-1">
     <p>There are no items left to select</p>
   </div>
 );
 const List = ({ items, dispatch }: ListProps) => {
   const listStyles =
-    "flex flex-col border p-2 max-h-40 overflow-scroll rounded-lg gap-y-1";
+    "flex flex-col border p-2 h-40 overflow-scroll rounded-lg gap-y-1";
 
   return (
     <ul className={listStyles}>
