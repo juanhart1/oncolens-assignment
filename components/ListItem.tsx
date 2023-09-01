@@ -8,7 +8,7 @@ const ListItem = ({ index, item, onClick }: ListItemProps) => {
     <li
       className={clsx(
         listItemBaseStyles,
-        item.selected && "bg-indigo-600 text-white",
+        item.selected ? "bg-indigo-600 text-white" : "",
       )}
       key={`${item.identifier} ${index}`}
       onClick={onClick}

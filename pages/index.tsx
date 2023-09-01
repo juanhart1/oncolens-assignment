@@ -34,7 +34,7 @@ const IndexPage = () => {
     dispatch({ type: "Remove All Added Items" });
 
   // shared styles
-  const sectionStyles = "border flex flex-col p-4 rounded-lg w-96";
+  const sectionStyles = "border flex flex-col p-4 rounded-lg w-96 bg-red-200";
   const inputContainerStyles = "flex flex-col mt-4 gap-2";
 
   return (
