@@ -1,6 +1,7 @@
 # Oncolens Assignment
 
 This is a really simple project that shows the usage of Next.js/TypeScript/Tailwind to meet requirements of assignment.
+The application is running on `localhost;3000` and the code for it lives under `~/pages/index.tsx`.
 
 ## Installation
 
